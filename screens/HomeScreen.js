@@ -11,12 +11,21 @@ import {
 import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
+import MoviesData from "../data/movies.json";
+import {MoviewPreview} from "../components/Movie";
+
+const apiPath = "http://varnatrd.tech/api";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
+  static MoviesApiPath = `${apiPath}/movies`;
 
+  state = {
+    movies:MoviesData ? MoviesData.splice(0,10) : []
+  }
+  componentDidMount
   render() {
     return (
       <View style={styles.container}>
@@ -32,25 +41,12 @@ export default class HomeScreen extends React.Component {
             />
           </View>
 
-          <View style={styles.getStartedContainer}>
-            {this._maybeRenderDevelopmentModeWarning()}
-
-            <Text style={styles.getStartedText}>Get started by opening</Text>
-
-            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-              <MonoText style={styles.codeHighlightText}>screens/HomeScreen.js</MonoText>
+          <View style={{ backgroundColor: "#ccc", padding: 10, display: "flex" }}>
+              {this.state.movies.sort((va, vb) => vb.year - va.year ).slice(0, 11).map(movie => (
+                <MoviewPreview key={movie._id} movie={movie} />
+              ))}
             </View>
-
-            <Text style={styles.getStartedText}>
-              Change this text and your app will automatically reload.
-            </Text>
-          </View>
-
-          <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
-            </TouchableOpacity>
-          </View>
+          
         </ScrollView>
 
         <View style={styles.tabBarInfoContainer}>
