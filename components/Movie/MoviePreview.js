@@ -12,7 +12,6 @@ class MoviewPreview extends Component {
     return (
       <View style={styles.container}>
         <TouchableOpacity>
-          <ScrollView>
             <View >
               <Image
                 source={{ uri: this.state.movie.covertImage }}
@@ -27,7 +26,6 @@ class MoviewPreview extends Component {
                 </View>
               </View>
             </View>
-          </ScrollView>
         </TouchableOpacity>
       </View>
     );

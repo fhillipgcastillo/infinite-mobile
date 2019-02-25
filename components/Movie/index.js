@@ -1,5 +1,7 @@
 import MoviewPreview from './MoviePreview';
+import MovieList from './MovieList';
 
 export {
-  MoviewPreview
+  MoviewPreview,
+  MovieList
 };
