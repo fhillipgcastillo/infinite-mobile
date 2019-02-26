@@ -11,11 +11,10 @@ export default class MovieList extends Component {
     return (
       <ScrollView style={styles.listContainer}>
         {this.state.movies
-          .sort((va, vb) => vb.year - va.year)
-          .slice(0, 11)
-          .map(movie => (
-            <MoviewPreview key={movie._id} movie={movie} />
-          ))}
+          ? this.state.movies
+              .sort((va, vb) => vb.year - va.year)
+              .map((movie, index) => <MoviewPreview key={index} movie={movie} />)
+          : null}
       </ScrollView>
     );
   }
