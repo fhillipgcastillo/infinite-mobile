@@ -6,7 +6,8 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ActivityIndicator
 } from "react-native";
 import { MovieList, MoviewPreview } from "../components/Movie";
 import gql from "graphql-tag";
@@ -44,16 +45,32 @@ class HomeScreen extends React.Component {
   static MoviesApiPath = `${apiPath}/movies`;
 
   state = {
-    movies: []
+    movies: [],
+    currentPage: 1,
+    pageSize: 10
   };
-  componentDidMount() {  }
+  componentDidMount() {}
   render() {
     return (
-      <Query query={queries}>
+      <Query
+        query={queries}
+        variables={{
+          currentPage: this.state.currentPage,
+          pageSize: this.state.pageSize
+        }}
+      >
         {({ loading, error, data }) => {
-          if (loading) return( <Text>Loading...</Text>);
-          if (error) return (<Text>`Error! ${error.message}`</Text>);
-          return <MovieList movies={data.topMovies} />
+          console.log("data", data);
+          if (loading)
+            return (
+              <ActivityIndicator
+                animating={loading}
+                style={[styles.centering, { height: 80 }]}
+                size="large"
+              />
+            );
+          if (error) return <Text>`Error! ${error.message}`</Text>;
+          return <MovieList movies={data.topMovies} />;
         }}
       </Query>
     );
@@ -61,7 +78,7 @@ class HomeScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  
+  centering: { alignItems: "center", justifyContent: "center", padding: 8 }
 });
 
 export default HomeScreen;
