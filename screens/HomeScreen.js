@@ -16,12 +16,12 @@ import { Query } from "react-apollo";
 const apiPath = "http://varnatrd.tech/api";
 
 const queries = gql`
-  {
+  query($pageSize: Int!, $currentPage: Int!) {
     topMovies: allMovies(
       orderBy: { released: -1 }
       filter: { released: { from: "2017", to: "2020" } }
-      pageSize: 10
-      page: 1
+      pageSize: $pageSize
+      page: $currentPage
     ) {
       id
       title
@@ -43,7 +43,6 @@ class HomeScreen extends React.Component {
     // header: null
   };
   static MoviesApiPath = `${apiPath}/movies`;
-
   state = {
     movies: [],
     currentPage: 1,
@@ -51,16 +50,15 @@ class HomeScreen extends React.Component {
   };
   componentDidMount() {}
   render() {
+    var variables = {
+      currentPage: this.state.currentPage,
+      pageSize: this.state.pageSize
+    };
+    _handleNextPage = () => {};
     return (
-      <Query
-        query={queries}
-        variables={{
-          currentPage: this.state.currentPage,
-          pageSize: this.state.pageSize
-        }}
-      >
-        {({ loading, error, data }) => {
-          console.log("data", data);
+      <Query query={queries} variables={variables}>
+        {({ loading, error, data, fetchMore, variables }) => {
+          // if(variables) console.log(variables);
           if (loading)
             return (
               <ActivityIndicator
@@ -69,7 +67,11 @@ class HomeScreen extends React.Component {
                 size="large"
               />
             );
-          if (error) return <Text>`Error! ${error.message}`</Text>;
+          if(fetchMore){
+            console.log("has fetch more");
+          }
+          if (error) return <Text>{`Error! ${error.message}`}</Text>;
+          
           return <MovieList movies={data.topMovies} />;
         }}
       </Query>
