@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Image,
   Platform,
@@ -6,155 +6,81 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ActivityIndicator
 } from "react-native";
-import { WebBrowser } from "expo";
-
-import MoviesData from "../data/movies.json";
 import { MovieList, MoviewPreview } from "../components/Movie";
+import gql from "graphql-tag";
+import { Query } from "react-apollo";
 
 const apiPath = "http://varnatrd.tech/api";
 
-export default class HomeScreen extends React.Component {
+const queries = gql`
+  query($pageSize: Int!, $currentPage: Int!) {
+    topMovies: allMovies(
+      orderBy: { released: -1 }
+      filter: { released: { from: "2017", to: "2020" } }
+      pageSize: $pageSize
+      page: $currentPage
+    ) {
+      id
+      title
+      year
+      released
+      actors
+      rating
+      covertImage
+      fullImage
+      synopsis
+      mediaContent
+    }
+  }
+`;
+
+class HomeScreen extends React.Component {
   static navigationOptions = {
-    title: "Infinite Entertaiment",
+    title: "Infinite Entertaiment"
     // header: null
   };
   static MoviesApiPath = `${apiPath}/movies`;
-
   state = {
-    movies: MoviesData ? MoviesData.splice(0, 10) : []
+    movies: [],
+    currentPage: 1,
+    pageSize: 10
   };
-  componentDidMount;
+  componentDidMount() {}
   render() {
+    var variables = {
+      currentPage: this.state.currentPage,
+      pageSize: this.state.pageSize
+    };
+    _handleNextPage = () => {};
     return (
-      <View style={styles.container}>
-        <MovieList movies={this.state.movies}/>
-      </View>
+      <Query query={queries} variables={variables}>
+        {({ loading, error, data, fetchMore, variables }) => {
+          // if(variables) console.log(variables);
+          if (loading)
+            return (
+              <ActivityIndicator
+                animating={loading}
+                style={[styles.centering, { height: 80 }]}
+                size="large"
+              />
+            );
+          if(fetchMore){
+            console.log("has fetch more");
+          }
+          if (error) return <Text>{`Error! ${error.message}`}</Text>;
+          
+          return <MovieList movies={data.topMovies} />;
+        }}
+      </Query>
     );
   }
-
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use
-          useful development tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
-  }
-
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync(
-      "https://docs.expo.io/versions/latest/guides/development-mode"
-    );
-  };
-
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      "https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes"
-    );
-  };
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: "rgba(0,0,0,0.4)",
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: "center"
-  },
-  contentContainer: {
-    paddingTop: 30
-  },
-  welcomeContainer: {
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 20
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: "contain",
-    marginTop: 3,
-    marginLeft: -10
-  },
-  getStartedContainer: {
-    alignItems: "center",
-    marginHorizontal: 50
-  },
-  homeScreenFilename: {
-    marginVertical: 7
-  },
-  codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
-  },
-  codeHighlightContainer: {
-    backgroundColor: "rgba(0,0,0,0.05)",
-    borderRadius: 3,
-    paddingHorizontal: 4
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: "rgba(96,100,109, 1)",
-    lineHeight: 24,
-    textAlign: "center"
-  },
-  tabBarInfoContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: "black",
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3
-      },
-      android: {
-        elevation: 20
-      }
-    }),
-    alignItems: "center",
-    backgroundColor: "#fbfbfb",
-    paddingVertical: 20
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: "rgba(96,100,109, 1)",
-    textAlign: "center"
-  },
-  navigationFilename: {
-    marginTop: 5
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: "center"
-  },
-  helpLink: {
-    paddingVertical: 15
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: "#2e78b7"
-  }
+  centering: { alignItems: "center", justifyContent: "center", padding: 8 }
 });
+
+export default HomeScreen;
