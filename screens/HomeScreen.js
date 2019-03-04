@@ -86,16 +86,15 @@ class HomeScreen extends React.Component {
                 size="large"
               />
             );
-          if (fetchMore) {
-            console.log("has fetch more");
-          }
           if (error) return <Text>{`Error! ${error.message}`}</Text>;
           // console.log("data", data);
-
+          
+          if (fetchMore) console.log("has fetch more");
+          
           // this.setState({data: data});
           return (
             <MovieList
-              movies={this.state.data.topMovies}
+              movies={data.topMovies}
               fetchMore={fetchMore}
               onFetchMore={this.onFetchMore}
             />
