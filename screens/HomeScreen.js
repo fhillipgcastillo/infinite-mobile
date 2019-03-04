@@ -7,7 +7,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ActivityIndicator
+  ActivityIndicator,
+  RefreshControl
 } from "react-native";
 import { MovieList, MoviewPreview } from "../components/Movie";
 import gql from "graphql-tag";
@@ -46,19 +47,37 @@ class HomeScreen extends React.Component {
   state = {
     movies: [],
     currentPage: 1,
-    pageSize: 10
+    pageSize: 10,
+    isLoading: true,
+    data: []
   };
-  componentDidMount() {}
+  componentDidMount() {
+    //this.setState({isLoading: loading});
+    if (this.props.data) this.setState({ data: this.props.data });
+  }
+  // setDataState = ()=>{
+  //   this.setState({data:data});
+  // };
+  _handleNextPage = () => {};
+  onFetchMore = (prev, { fetchMoreResult, ...rest }) => {
+    if (!fetchMoreResult) return prev;
+    this.setState({ data: [...this.state, ...fetchMoreResult] });
+    return fetchMoreResult;
+  };
+  onReflesh = (prev, { fetchMoreResult, ...rest }) => {
+    if (!fetchMoreResult) return prev;
+    this.setState({ data: prev });
+    return fetchMoreResult;
+  };
   render() {
     var variables = {
       currentPage: this.state.currentPage,
       pageSize: this.state.pageSize
     };
-    _handleNextPage = () => {};
+
     return (
       <Query query={queries} variables={variables}>
         {({ loading, error, data, fetchMore, variables }) => {
-          // if(variables) console.log(variables);
           if (loading)
             return (
               <ActivityIndicator
@@ -67,12 +86,20 @@ class HomeScreen extends React.Component {
                 size="large"
               />
             );
-          if(fetchMore){
+          if (fetchMore) {
             console.log("has fetch more");
           }
           if (error) return <Text>{`Error! ${error.message}`}</Text>;
-          
-          return <MovieList movies={data.topMovies} />;
+          // console.log("data", data);
+
+          // this.setState({data: data});
+          return (
+            <MovieList
+              movies={this.state.data.topMovies}
+              fetchMore={fetchMore}
+              onFetchMore={this.onFetchMore}
+            />
+          );
         }}
       </Query>
     );

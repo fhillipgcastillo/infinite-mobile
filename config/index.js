@@ -10,7 +10,7 @@ switch (process.env.NODE_ENV) {
     break;
   case "dev":
   default:
-    config.db.apiUri = "http://192.168.0.101:8080/api";
+    config.db.apiUri = "http://192.168.0.103:8080/api";
     break;
 }
 

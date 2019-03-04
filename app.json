@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Infinite Entertaiment Mobile",
-    "slug": "infiniteMobile",
+    "slug": "infinite",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": [
@@ -23,7 +23,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fhillipgcastillo.infinite"
+    },
+    "android": {
+      "package": "com.fhillipgcastillo.infinite"
     }
   }
 }
