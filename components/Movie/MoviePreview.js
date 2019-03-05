@@ -11,7 +11,7 @@ class MoviewPreview extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={this.props.onDetailPress}>
             <View >
               <Image
                 source={{ uri: this.state.movie.covertImage }}

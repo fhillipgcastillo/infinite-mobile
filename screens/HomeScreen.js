@@ -97,6 +97,7 @@ class HomeScreen extends React.Component {
                 skip={this.state.skip}
                 limit={this.limit}
                 loading={loading || false}
+                onDetailPress={()=>this.props.navigation.navigate('Details')}
               />
               {error ? <Text>{`Error! ${error.message}`}</Text> : null}
               {loading 
