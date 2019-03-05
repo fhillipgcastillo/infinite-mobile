@@ -17,12 +17,12 @@ import { Query } from "react-apollo";
 const apiPath = "http://varnatrd.tech/api";
 
 const queries = gql`
-  query($pageSize: Int!, $currentPage: Int!) {
+  query($limit: Int!, $skip: Int!) {
     topMovies: allMovies(
       orderBy: { released: -1 }
       filter: { released: { from: "2017", to: "2020" } }
-      pageSize: $pageSize
-      page: $currentPage
+      limit: $limit
+      skip: $skip
     ) {
       id
       title
@@ -53,51 +53,71 @@ class HomeScreen extends React.Component {
   };
   componentDidMount() {
     //this.setState({isLoading: loading});
-    if (this.props.data) this.setState({ data: this.props.data });
+    // if (this.props.data) this.setState({ data: this.props.data });
   }
-  // setDataState = ()=>{
-  //   this.setState({data:data});
-  // };
-  _handleNextPage = () => {};
-  onFetchMore = (prev, { fetchMoreResult, ...rest }) => {
-    if (!fetchMoreResult) return prev;
-    this.setState({ data: [...this.state, ...fetchMoreResult] });
-    return fetchMoreResult;
-  };
-  onReflesh = (prev, { fetchMoreResult, ...rest }) => {
-    if (!fetchMoreResult) return prev;
-    this.setState({ data: prev });
-    return fetchMoreResult;
-  };
+  onFetchMore = fetchMore => {
+    var self = this;
+    var skip = this.state.currentPage+this.state.pageSize;
+    self.setState({currentPage: skip});
+
+    // console.log({
+    //   skip: skip,
+    //   limit: this.state.pageSize
+    // });
+
+    fetchMore({
+      variables: {
+        skip: skip,
+        limit: this.state.pageSize
+      },
+      updateQuery: (prev, { fetchMoreResult, ...rest }) => {
+        if (!fetchMoreResult) return prev;
+        var newValue = Object.assign({}, prev, {
+          topMovies: [...prev.topMovies, ...fetchMoreResult.topMovies]
+        });
+        console.log(`${newValue.topMovies.length} total data`);
+        return newValue;
+      }
+    });
+  }
+  onReflesh = fetchMore => fetchMore({
+    variables: {
+      skip: this.state.currentPage+this.state.pageSize,
+      limit: this.state.pageSize
+    },
+    updateQuery: (prev, { fetchMoreResult, ...rest }) => {
+      if (!fetchMoreResult) return prev;
+      return fetchMoreResult;
+    }
+  });
   render() {
-    var variables = {
-      currentPage: this.state.currentPage,
-      pageSize: this.state.pageSize
+    let variables = {
+      skip: 0/*this.state.currentPage*/,
+      limit: 10/*this.state.pageSize*/
     };
 
     return (
       <Query query={queries} variables={variables}>
         {({ loading, error, data, fetchMore, variables }) => {
-          if (loading)
-            return (
-              <ActivityIndicator
-                animating={loading}
-                style={[styles.centering, { height: 80 }]}
-                size="large"
-              />
-            );
-          if (error) return <Text>{`Error! ${error.message}`}</Text>;
-          // console.log("data", data);
-          
-          if (fetchMore) console.log("has fetch more");
-          
-          // this.setState({data: data});
           return (
-            <MovieList
-              movies={data.topMovies}
-              fetchMore={fetchMore}
-              onFetchMore={this.onFetchMore}
-            />
+            <View>
+              <MovieList
+                movies={data.topMovies || []}
+                onFetchMore={() => this.onFetchMore(fetchMore)}
+                onReflesh={() => this.onReflesh(fetchMore)}
+                currentPage={this.state.currentPage}
+                pageSize={this.pageSize}
+                loading={loading || false}
+              />
+              {error ? <Text>{`Error! ${error.message}`}</Text> : null}
+              {loading 
+              ? <ActivityIndicator
+                  animating={loading}
+                  style={[styles.centering, { height: 80 }]}
+                  size="large"
+                />
+               : null}
+            </View>
           );
         }}
       </Query>
