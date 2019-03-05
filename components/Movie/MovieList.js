@@ -27,7 +27,7 @@ export default class MovieList extends Component {
         }
       >
         {this.props.movies.map((movie, index) => (
-          <MoviewPreview key={index} movie={movie} onDetailPress={this.props.onDetailPress} {...this.props} />
+          <MoviewPreview key={index} movie={movie} onDetailPress={()=>this.props.navigation.navigate('Details')} {...this.props} />
         ))}
         <View className="pagination" style={styles.pagination}>
           <Button onPress={this.onFetchMore} title="Next" />

@@ -34,6 +34,7 @@ const queries = gql`
       fullImage
       synopsis
       mediaContent
+      trailer
     }
   }
 `;
@@ -97,7 +98,6 @@ class HomeScreen extends React.Component {
                 skip={this.state.skip}
                 limit={this.limit}
                 loading={loading || false}
-                onDetailPress={()=>this.props.navigation.navigate('Details')}
                 {...this.props}
               />
               {error ? <Text>{`Error! ${error.message}`}</Text> : null}

@@ -9,7 +9,7 @@ class MoviewPreview extends Component {
     this.setState({movie:this.props.movie})
   }
   handleOnPress = () => {
-    this.props.navigation.navigate("Details", {movieId: this.props.movie.id})
+    this.props.navigation.navigate("Details", {movieId: this.props.movie.id, movie: this.props.movie})
   }
   render() {
     return (
