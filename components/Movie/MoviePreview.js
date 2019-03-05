@@ -8,10 +8,13 @@ class MoviewPreview extends Component {
   componentDidMount(){
     this.setState({movie:this.props.movie})
   }
+  handleOnPress = () => {
+    this.props.navigation.navigate("Details", {movieId: this.props.movie.id})
+  }
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity onPress={this.props.onDetailPress}>
+        <TouchableOpacity onPress={this.handleOnPress}>
             <View >
               <Image
                 source={{ uri: this.state.movie.covertImage }}
