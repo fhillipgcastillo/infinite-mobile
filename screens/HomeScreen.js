@@ -46,44 +46,33 @@ class HomeScreen extends React.Component {
   static MoviesApiPath = `${apiPath}/movies`;
   state = {
     movies: [],
-    currentPage: 1,
-    pageSize: 10,
-    isLoading: true,
+    skip: 0,
+    limit: 10,
     data: []
   };
-  componentDidMount() {
-    //this.setState({isLoading: loading});
-    // if (this.props.data) this.setState({ data: this.props.data });
-  }
   onFetchMore = fetchMore => {
     var self = this;
-    var skip = this.state.currentPage+this.state.pageSize;
-    self.setState({currentPage: skip});
-
-    // console.log({
-    //   skip: skip,
-    //   limit: this.state.pageSize
-    // });
+    var skip = this.state.skip+this.state.limit;
+    self.setState({skip: skip});
 
     fetchMore({
       variables: {
         skip: skip,
-        limit: this.state.pageSize
+        limit: this.state.limit
       },
       updateQuery: (prev, { fetchMoreResult, ...rest }) => {
         if (!fetchMoreResult) return prev;
         var newValue = Object.assign({}, prev, {
           topMovies: [...prev.topMovies, ...fetchMoreResult.topMovies]
         });
-        console.log(`${newValue.topMovies.length} total data`);
         return newValue;
       }
     });
   }
   onReflesh = fetchMore => fetchMore({
     variables: {
-      skip: this.state.currentPage+this.state.pageSize,
-      limit: this.state.pageSize
+      skip: this.state.skip+this.state.limit,
+      limit: this.state.limit
     },
     updateQuery: (prev, { fetchMoreResult, ...rest }) => {
       if (!fetchMoreResult) return prev;
@@ -92,8 +81,8 @@ class HomeScreen extends React.Component {
   });
   render() {
     let variables = {
-      skip: 0/*this.state.currentPage*/,
-      limit: 10/*this.state.pageSize*/
+      skip: this.state.skip,
+      limit: this.state.limit
     };
 
     return (
@@ -105,8 +94,8 @@ class HomeScreen extends React.Component {
                 movies={data.topMovies || []}
                 onFetchMore={() => this.onFetchMore(fetchMore)}
                 onReflesh={() => this.onReflesh(fetchMore)}
-                currentPage={this.state.currentPage}
-                pageSize={this.pageSize}
+                skip={this.state.skip}
+                limit={this.limit}
                 loading={loading || false}
               />
               {error ? <Text>{`Error! ${error.message}`}</Text> : null}
