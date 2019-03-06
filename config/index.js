@@ -1,7 +1,8 @@
 let config = {
   db: {
     apiUri: ""
-  }
+  },
+  theme: "default"
 };
 
 switch (process.env.NODE_ENV) {

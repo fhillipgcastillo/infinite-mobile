@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Button,
   Image,
-  ScrollView
+  ScrollView,
+  StyleSheet
 } from "react-native";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
@@ -40,9 +41,10 @@ export default class DetailsScreen extends Component {
   };
   componentDidMount() {
     const { navigation } = this.props;
-    const itemId = navigation.getParam("movieId", "NO-ID");
+    // const itemId = navigation.getParam("movieId", "NO-ID");
     const movie = navigation.getParam("movie", {});
     this.setState({ movie: movie });
+    console.log("fullImg", movie.fullImage);
   }
   handleTrailerVideo = () => {
     Linking.canOpenURL(this.state.movie.trailer).then(supported => {
@@ -65,25 +67,79 @@ export default class DetailsScreen extends Component {
     });
   };
   render() {
-    // const { navigation } = this.props;
+    const { navigation } = this.props;
     // const itemId = navigation.getParam("movieId", "NO-ID");
-    // const movie = navigation.getParam("movie", {});
+    const movie = navigation.getParam("movie", {});
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <View style={{ flex: 1 }}>
         <ScrollView>
-          <Image
-            source={{ uri: this.state.movie.covertImage }}
-            style={{height: 200, width: null, flex: 1}}
-          />
-          <Text>{this.state.movie.title}</Text>
-          <TouchableOpacity onPress={this.handleTrailerVideo}>
-            <Text>{"Watch trailer"}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.handleOpenUpMovie}>
-            <Text>{"Watch The Movie"}</Text>
-          </TouchableOpacity>
+          {movie.fullImage && (
+            <View style={{ padding: 2.5, display: "flex", flex: 1 }}>
+              <Image
+                source={{
+                  uri:
+                    movie.fullImage ||
+                    "https://www.skylightcinemas.com/template_1/img/default-movie-landscape.jpg"
+                }}
+                style={{ height: 300, width: null, flex: 1 }}
+              />
+            </View>
+          )}
+          <Text style={styles.themes.default.title}>
+            {this.state.movie.title}
+          </Text>
+          <Text style={{...styles.themes.default.text,...styles.themes.default.padding5}}>
+            {this.state.movie.synopsis}
+          </Text>
+          <View style={{ display:"flex", flexDirection: "row", justifyContente:"space-between"}}>
+            <TouchableOpacity
+              onPress={this.handleTrailerVideo}
+              style={{...styles.themes.default.button}}
+            >
+              <Text style={{...styles.themes.default.textCenter}}>{"Watch trailer"}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={this.handleOpenUpMovie}
+              style={styles.themes.default.button}
+            >
+              <Text style={{...styles.themes.default.textCenter}}>{"Watch The Movie"}</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </View>
     );
   }
 }
+
+const styles = {
+  themes: {
+    default: {
+      bigTitle: {
+        fontSize: 22
+      },
+      title: {
+        fontSize: 18,
+        padding: 5
+      },
+      text: {
+        fontSize: 12
+      },
+      textCenter: {
+        textAlign: "center"
+      },
+      padding5: {
+        padding: 5
+      },
+      button: {
+        fontSize: 12,
+        padding: 5,
+        backgroundColor: "#2196f3",
+        color: "white",
+        marginTop: 5,
+        marginButton: 5,
+        borderRadius: 5,
+        textAlign: "center"
+      }
+    }
+  }
+};

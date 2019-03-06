@@ -69,7 +69,21 @@ class HomeScreen extends React.Component {
         return newValue;
       }
     });
-  }
+  };
+  onSearch = ()=>{
+    if(this.props.fetchMore){
+      this.props.fetchMore({
+        variables: {
+          skip: 0,
+          limit: this.state.limit
+        },
+        updateQuery: (prev, { fetchMoreResult, ...rest }) => {
+          if (!fetchMoreResult) return prev;
+          return fetchMoreResult;
+        }
+      })
+    }
+  };
   onReflesh = fetchMore => fetchMore({
     variables: {
       skip: this.state.skip+this.state.limit,
