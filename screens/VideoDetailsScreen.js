@@ -21,12 +21,17 @@ export default class DetailsScreen extends Component {
   state = {
     movie: {}
   };
+  Data = null;
   static navigationOptions = ({ movie, navigation }) => {
     let video = navigation.getParam("movie", {});
     return {
-      title: (movie && movie.title) || video.title || ""
+      title: (movie && movie.title) || video.title || "",
       // headerTransparent: true,
       // headerTintColor: "rgba(255,255,255,.8)"
+      headerStyle: {
+        backgroundColor: "#2196f3a6",
+        color: "white"
+      }
     };
   };
   getMovieId = () => {
@@ -62,30 +67,40 @@ export default class DetailsScreen extends Component {
     const movie = navigation.getParam("movie", {});
     this.setState({ movie: movie });
     // console.log("data", this.props.data);
-    if(this.props.data) this.setState({ movie: this.props.data.movie });
+    if (this.props.data) this.setState({ movie: this.props.data.movie });
   }
-  handleTrailerVideo = () => {
-    WebBrowser.openBrowserAsync(this.props.data.movie.trailer);
-    // Linking.canOpenURL(this.state.movie.trailer).then(supported => {
-    //   if (supported) {
-    //     Linking.openURL(this.state.movie.trailer);
-    //   } else {
-    //     console.log("Don't know how to open URI: " + this.state.movie.trailer);
-    //   }
-    // });
+  handleTrailerVideo = src => {
+    // console.log(this.state.movie);
+    try {
+      console.log("src", src);
+      WebBrowser.openBrowserAsync(src);
+    } catch {
+      Linking.canOpenURL(src).then(supported => {
+        if (supported) {
+          Linking.openURL(src);
+        } else {
+          console.log(
+            "Don't know how to open URI: " + src
+          );
+        }
+      });
+    }
   };
-  handleOpenUpMovie = () => {
-    WebBrowser.openBrowserAsync(this.state.movie.mediaContent);
-    // this still commented because Maybe in IOS it would not work
-    // Linking.canOpenURL(this.state.movie.mediaContent).then(supported => {
-    //   if (supported) {
-    //     Linking.openURL(this.state.movie.mediaContent);
-    //   } else {
-    //     console.log(
-    //       "Don't know how to open URI: " + this.state.movie.mediaContent
-    //     );
-    //   }
-    // });
+  handleOpenUpMovie = src => {
+    try {
+      console.log("src", src);
+      WebBrowser.openBrowserAsync(src);
+    } catch {
+      Linking.canOpenURL(src).then(supported => {
+        if (supported) {
+          Linking.openURL(src);
+        } else {
+          console.log(
+            "Don't know how to open URI: " + src
+          );
+        }
+      });
+    }
   };
   render() {
     const { navigation } = this.props;
@@ -94,6 +109,7 @@ export default class DetailsScreen extends Component {
       <Query query={this._getQuery() || "{}"} variables={{ movieId: movie.id }}>
         {({ loading, error, data, fetchMore, variables }) => {
           // if(data && this.state.movie) console.log('have data', this.state.movie);
+          if (data) this.Data = data;
           return (
             <View style={{ flex: 1 }}>
               <ScrollView>
@@ -105,14 +121,15 @@ export default class DetailsScreen extends Component {
                   />
                 ) : null}
 
-                {movie && (
+                {data && data.movie && (
                   <React.Fragment>
-                    {data && data.movie && <MovieThumbnailContainer
+                    <MovieThumbnailContainer
                       thumbnailSrc={data.movie.fullImage || movie.covertImage}
-                    />}
-
+                    />
+                    {/* <Text style={styles.themes.default.title}>
+                      {movie.title}
+                    </Text> */}
                     <MovieSpecificDetails {...data.movie} />
-
                     <View
                       className="movie-actions"
                       style={{
@@ -123,14 +140,13 @@ export default class DetailsScreen extends Component {
                     >
                       <_Button
                         title="Watch trailer"
-                        onPress={this.handleTrailerVideo}
+                        onPress={() => this.handleTrailerVideo(data.movie.trailer)}
                       />
                       <_Button
                         title="Watch The Movie"
-                        onPress={this.handleOpenUpMovie}
+                        onPress={() => this.handleOpenUpMovie(data.movie.mediaContent)}
                       />
                     </View>
-
                     <View className="MoreLikeThis" />
                   </React.Fragment>
                 )}

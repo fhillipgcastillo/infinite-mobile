@@ -34,9 +34,8 @@ const ComplementaryDetails = props => (
 
 export default (MovieSpecificDetails = props => (
   <View className="movie-details" style={styles.themes.default.container}>
-    <Text style={styles.themes.default.title}>{props.title}</Text>
-    {props.synopsis && (
-      <React.Fragment>
+    {/* <Text style={styles.themes.default.title}>{props.title}</Text> */}
+    <React.Fragment>
         <ComplementaryDetails {...props} />
         <Text
           style={{
@@ -55,6 +54,5 @@ export default (MovieSpecificDetails = props => (
             ))}
         </Text>
       </React.Fragment>
-    )}
   </View>
 ));
