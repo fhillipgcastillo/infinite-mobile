@@ -27,16 +27,7 @@ const queries = gql`
       id
       title
       year
-      released
-      actors
-      rating
       covertImage
-      fullImage
-      synopsis
-      mediaContent
-      trailer
-      view
-      rating
     }
   }
 `;

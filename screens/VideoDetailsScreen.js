@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  StyleSheet
+  StyleSheet,
+  ActivityIndicator
 } from "react-native";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
@@ -20,33 +21,38 @@ export default class DetailsScreen extends Component {
   state = {
     movie: {}
   };
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = ({ movie, navigation }) => {
     let video = navigation.getParam("movie", {});
     return {
-      // title: video.title || "",
-      headerTransparent: true,
-      headerTintColor: "rgba(255,255,255,.8)"
+      title: (movie && movie.title) || video.title || ""
+      // headerTransparent: true,
+      // headerTintColor: "rgba(255,255,255,.8)"
     };
   };
   getMovieId = () => {
     const { navigation } = this.props;
-    return navigation.getParam("movieId", "");
+    return navigation.getParam("movie", {}).id;
   };
   _getQuery = () => {
     let QUERY_DETAILS = gql`
-      getMovie(_id: ${this.getMovieId()}){
-        id
-        title
-        year
-        released
-        actors
-        rating
-        covertImage
-        fullImage
-        synopsis
-        mediaContent
-        trailer
-        synopsis
+      query($movieId: String) {
+        movie: getMovie(_id: $movieId) {
+          id
+          title
+          year
+          released
+          actors
+          rating
+          covertImage
+          fullImage
+          synopsis
+          mediaContent
+          trailer
+          synopsis
+          view
+          rating
+          actors
+        }
       }
     `;
     return QUERY_DETAILS;
@@ -55,9 +61,11 @@ export default class DetailsScreen extends Component {
     const { navigation } = this.props;
     const movie = navigation.getParam("movie", {});
     this.setState({ movie: movie });
+    // console.log("data", this.props.data);
+    if(this.props.data) this.setState({ movie: this.props.data.movie });
   }
   handleTrailerVideo = () => {
-    WebBrowser.openBrowserAsync(this.state.movie.trailer);
+    WebBrowser.openBrowserAsync(this.props.data.movie.trailer);
     // Linking.canOpenURL(this.state.movie.trailer).then(supported => {
     //   if (supported) {
     //     Linking.openURL(this.state.movie.trailer);
@@ -82,30 +90,55 @@ export default class DetailsScreen extends Component {
   render() {
     const { navigation } = this.props;
     const movie = navigation.getParam("movie", {});
-
     return (
-      <View style={{ flex: 1 }}>
-        <ScrollView>
-          <MovieThumbnailContainer thumbnailSrc={this.state.movie.fullImage} />
+      <Query query={this._getQuery() || "{}"} variables={{ movieId: movie.id }}>
+        {({ loading, error, data, fetchMore, variables }) => {
+          // if(data && this.state.movie) console.log('have data', this.state.movie);
+          return (
+            <View style={{ flex: 1 }}>
+              <ScrollView>
+                {loading ? (
+                  <ActivityIndicator
+                    animating={loading}
+                    style={[styles.centering, { height: 80 }]}
+                    size="large"
+                  />
+                ) : null}
 
-          <MovieSpecificDetails {...this.state.movie} />
+                {movie && (
+                  <React.Fragment>
+                    {data && data.movie && <MovieThumbnailContainer
+                      thumbnailSrc={data.movie.fullImage || movie.covertImage}
+                    />}
 
-          {/* movie action */}
-          <View
-            className="movie-actions"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center"
-            }}
-          >
-            <_Button title="Watch trailer" onPress={this.handleTrailerVideo} />
-            <_Button title="Watch The Movie" onPress={this.handleOpenUpMovie} />
-          </View>
-          {/* More Like This Section */}
-          <View className="MoreLikeThis"></View>
-        </ScrollView>
-      </View>
+                    <MovieSpecificDetails {...data.movie} />
+
+                    <View
+                      className="movie-actions"
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "center"
+                      }}
+                    >
+                      <_Button
+                        title="Watch trailer"
+                        onPress={this.handleTrailerVideo}
+                      />
+                      <_Button
+                        title="Watch The Movie"
+                        onPress={this.handleOpenUpMovie}
+                      />
+                    </View>
+
+                    <View className="MoreLikeThis" />
+                  </React.Fragment>
+                )}
+              </ScrollView>
+            </View>
+          );
+        }}
+      </Query>
     );
   }
 }

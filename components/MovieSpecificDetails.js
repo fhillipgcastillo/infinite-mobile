@@ -10,10 +10,13 @@ const _styles = StyleSheet.create({
   marginHorizontal10: {
     marginLeft: 10,
     marginRight: 10
-  },
+  }
 });
 const ComplementaryDetails = props => (
-  <View className="complementary-details" style={{display:"flex", flexDirection:"row", color:"#c7c7c7"}}>
+  <View
+    className="complementary-details"
+    style={{ display: "flex", flexDirection: "row", color: "#c7c7c7" }}
+  >
     <Text
       style={{
         color: "#2196f3",
@@ -24,23 +27,34 @@ const ComplementaryDetails = props => (
     >
       Views: {props.view}
     </Text>
-    <Text style={{..._styles.marginHorizontal10}}>{props.rating || 0}</Text>
-    <Text style={{..._styles.marginHorizontal10}}>{props.year}</Text>
+    <Text style={{ ..._styles.marginHorizontal10 }}>{props.rating || 0}</Text>
+    <Text style={{ ..._styles.marginHorizontal10 }}>{props.year}</Text>
   </View>
 );
 
-export default MovieSpecificDetails = props => (
+export default (MovieSpecificDetails = props => (
   <View className="movie-details" style={styles.themes.default.container}>
     <Text style={styles.themes.default.title}>{props.title}</Text>
-    <ComplementaryDetails {...props} />
-    <Text
-      style={{
-        ...styles.themes.default.text,
-        ...styles.themes.default.padding5
-      }}
-    >
-      {props.synopsis}
-    </Text>
-    <Text>Actors: </Text>
+    {props.synopsis && (
+      <React.Fragment>
+        <ComplementaryDetails {...props} />
+        <Text
+          style={{
+            ...styles.themes.default.text,
+            ...styles.themes.default.padding5
+          }}
+        >
+          {props.synopsis}
+        </Text>
+        <Text>
+          Actors:
+          {props.actors &&
+            props.actors.length > 0 &&
+            props.actors.map((actor, index) => (
+              <Text key={index}>{actor}</Text>
+            ))}
+        </Text>
+      </React.Fragment>
+    )}
   </View>
-);
+));
