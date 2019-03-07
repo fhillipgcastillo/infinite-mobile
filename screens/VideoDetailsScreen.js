@@ -11,10 +11,32 @@ import {
 } from "react-native";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
+import { Constants, WebBrowser } from "expo";
 
+const _Button = props => {
+  return (
+    <TouchableOpacity
+      onPress={props.handleTrailerVideo}
+      style={{ ...styles.themes.default.button }}
+    >
+      <Text style={{ color: "white", ...styles.themes.default.textCenter }}>
+        {props.title}
+      </Text>
+      {props.children}
+    </TouchableOpacity>
+  );
+};
 export default class DetailsScreen extends Component {
   state = {
     movie: {}
+  };
+  static navigationOptions = ({ navigation }) => {
+    let video = navigation.getParam("movie", {});
+    return {
+      // title: video.title || "",
+      headerTransparent: true,
+      headerTintColor: "rgba(255,255,255,.8)"
+    };
   };
   getMovieId = () => {
     const { navigation } = this.props;
@@ -41,19 +63,18 @@ export default class DetailsScreen extends Component {
   };
   componentDidMount() {
     const { navigation } = this.props;
-    // const itemId = navigation.getParam("movieId", "NO-ID");
     const movie = navigation.getParam("movie", {});
     this.setState({ movie: movie });
-    console.log("fullImg", movie.fullImage);
   }
   handleTrailerVideo = () => {
-    Linking.canOpenURL(this.state.movie.trailer).then(supported => {
-      if (supported) {
-        Linking.openURL(this.state.movie.trailer);
-      } else {
-        console.log("Don't know how to open URI: " + this.state.movie.trailer);
-      }
-    });
+    WebBrowser.openBrowserAsync(this.state.movie.trailer);
+    // Linking.canOpenURL(this.state.movie.trailer).then(supported => {
+    //   if (supported) {
+    //     Linking.openURL(this.state.movie.trailer);
+    //   } else {
+    //     console.log("Don't know how to open URI: " + this.state.movie.trailer);
+    //   }
+    // });
   };
   handleOpenUpMovie = () => {
     Linking.canOpenURL(this.state.movie.mediaContent).then(supported => {
@@ -74,36 +95,38 @@ export default class DetailsScreen extends Component {
       <View style={{ flex: 1 }}>
         <ScrollView>
           {movie.fullImage && (
-            <View style={{ padding: 2.5, display: "flex", flex: 1 }}>
+            <View style={{ display: "flex", flex: 1 }}>
               <Image
                 source={{
-                  uri:
-                    movie.fullImage ||
-                    "https://www.skylightcinemas.com/template_1/img/default-movie-landscape.jpg"
+                  uri: movie.fullImage
                 }}
                 style={{ height: 300, width: null, flex: 1 }}
               />
             </View>
           )}
-          <Text style={styles.themes.default.title}>
-            {this.state.movie.title}
-          </Text>
-          <Text style={{...styles.themes.default.text,...styles.themes.default.padding5}}>
-            {this.state.movie.synopsis}
-          </Text>
-          <View style={{ display:"flex", flexDirection: "row", justifyContente:"space-between"}}>
-            <TouchableOpacity
-              onPress={this.handleTrailerVideo}
-              style={{...styles.themes.default.button}}
+          <View style={styles.themes.default.container}>
+            <Text style={styles.themes.default.title}>
+              {this.state.movie.title}
+            </Text>
+            <Text
+              style={{
+                ...styles.themes.default.text,
+                ...styles.themes.default.padding5
+              }}
             >
-              <Text style={{...styles.themes.default.textCenter}}>{"Watch trailer"}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={this.handleOpenUpMovie}
-              style={styles.themes.default.button}
+              {this.state.movie.synopsis}
+            </Text>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center"
+              }}
             >
-              <Text style={{...styles.themes.default.textCenter}}>{"Watch The Movie"}</Text>
-            </TouchableOpacity>
+            <_Button title="Watch trailer" {...this.handleTrailerVideo} />
+            <_Button title="Watch The Movie" {...this.handleOpenUpMovie} />
+            
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -114,15 +137,22 @@ export default class DetailsScreen extends Component {
 const styles = {
   themes: {
     default: {
+      container: {
+        paddingTop: 15,
+        paddingBottom: 15,
+        paddingLeft: 10,
+        paddingRight: 10
+      },
       bigTitle: {
-        fontSize: 22
+        fontSize: 24
       },
       title: {
-        fontSize: 18,
-        padding: 5
+        fontSize: 20,
+        padding: 5,
+        fontWeight: "bold"
       },
       text: {
-        fontSize: 12
+        fontSize: 16
       },
       textCenter: {
         textAlign: "center"
@@ -131,15 +161,21 @@ const styles = {
         padding: 5
       },
       button: {
-        fontSize: 12,
+        fontSize: 16,
         padding: 5,
         backgroundColor: "#2196f3",
         color: "white",
-        marginTop: 5,
-        marginButton: 5,
+        margin: 10,
         borderRadius: 5,
-        textAlign: "center"
+        textAlign: "center",
+        flex: 1
       }
-    }
+    },
+    light: {},
+    green: {},
+    red:{}
   }
 };
+
+const defaultThemeStyle = StyleSheet.create(styles.themes.default);
+// const lightThemeStyle = StyleSheet.create(styles.themes.default);
