@@ -9,7 +9,7 @@ import styles from '../config/styles';
 export default _Button = props => {
   return (
     <TouchableOpacity
-      onPress={props.handleTrailerVideo}
+      onPress={props.onPress}
       style={{ ...styles.themes.default.button }}
     >
       <Text style={{ color: "white", ...styles.themes.default.textCenter }}>

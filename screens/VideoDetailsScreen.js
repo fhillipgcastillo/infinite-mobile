@@ -67,15 +67,17 @@ export default class DetailsScreen extends Component {
     // });
   };
   handleOpenUpMovie = () => {
-    Linking.canOpenURL(this.state.movie.mediaContent).then(supported => {
-      if (supported) {
-        Linking.openURL(this.state.movie.mediaContent);
-      } else {
-        console.log(
-          "Don't know how to open URI: " + this.state.movie.mediaContent
-        );
-      }
-    });
+    WebBrowser.openBrowserAsync(this.state.movie.mediaContent);
+    // this still commented because Maybe in IOS it would not work
+    // Linking.canOpenURL(this.state.movie.mediaContent).then(supported => {
+    //   if (supported) {
+    //     Linking.openURL(this.state.movie.mediaContent);
+    //   } else {
+    //     console.log(
+    //       "Don't know how to open URI: " + this.state.movie.mediaContent
+    //     );
+    //   }
+    // });
   };
   render() {
     const { navigation } = this.props;
@@ -100,8 +102,8 @@ export default class DetailsScreen extends Component {
               justifyContent: "center"
             }}
           >
-            <_Button title="Watch trailer" {...this.handleTrailerVideo} />
-            <_Button title="Watch The Movie" {...this.handleOpenUpMovie} />
+            <_Button title="Watch trailer" onPress={this.handleTrailerVideo} />
+            <_Button title="Watch The Movie" onPress={this.handleOpenUpMovie} />
           </View>
         </ScrollView>
       </View>
