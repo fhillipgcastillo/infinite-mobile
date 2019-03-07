@@ -13,6 +13,7 @@ import { Query } from "react-apollo";
 import { Constants, WebBrowser } from "expo";
 import _Button from "../components/Button";
 import MovieThumbnailContainer from "../components/MovieThumbnailContainer";
+import MovieSpecificDetails from "../components/MovieSpecificDetails";
 import styles from "../config/styles";
 
 export default class DetailsScreen extends Component {
@@ -83,26 +84,13 @@ export default class DetailsScreen extends Component {
     return (
       <View style={{ flex: 1 }}>
         <ScrollView>
-          {/* movie-thumbnail-container */}
-          {movie.fullImage && <MovieThumbnailContainer thumbnailSrc={movie.fullImage} />}
-          {/* movie details */}
+          <MovieThumbnailContainer thumbnailSrc={this.state.movie.fullImage} />
 
-          <View
-            className="movie-details"
-            style={styles.themes.default.container}
-          >
-            <Text style={styles.themes.default.title}>
-              {this.state.movie.title}
-            </Text>
-            <Text
-              style={{
-                ...styles.themes.default.text,
-                ...styles.themes.default.padding5
-              }}
-            >
-              {this.state.movie.synopsis}
-            </Text>
-          </View>
+          <MovieSpecificDetails
+            title={this.state.movie.title}
+            synopsis={this.state.movie.synopsis}
+          />
+          
           {/* movie action */}
           <View
             className="movie-actions"
