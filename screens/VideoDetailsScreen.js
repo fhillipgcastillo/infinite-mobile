@@ -88,11 +88,8 @@ export default class DetailsScreen extends Component {
         <ScrollView>
           <MovieThumbnailContainer thumbnailSrc={this.state.movie.fullImage} />
 
-          <MovieSpecificDetails
-            title={this.state.movie.title}
-            synopsis={this.state.movie.synopsis}
-          />
-          
+          <MovieSpecificDetails {...this.state.movie} />
+
           {/* movie action */}
           <View
             className="movie-actions"
@@ -105,6 +102,8 @@ export default class DetailsScreen extends Component {
             <_Button title="Watch trailer" onPress={this.handleTrailerVideo} />
             <_Button title="Watch The Movie" onPress={this.handleOpenUpMovie} />
           </View>
+          {/* More Like This Section */}
+          <View className="MoreLikeThis"></View>
         </ScrollView>
       </View>
     );

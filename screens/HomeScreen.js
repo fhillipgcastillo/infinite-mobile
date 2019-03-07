@@ -35,6 +35,8 @@ const queries = gql`
       synopsis
       mediaContent
       trailer
+      view
+      rating
     }
   }
 `;
