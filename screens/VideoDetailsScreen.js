@@ -4,7 +4,6 @@ import {
   Text,
   Linking,
   TouchableOpacity,
-  Button,
   Image,
   ScrollView,
   StyleSheet
@@ -12,20 +11,10 @@ import {
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
 import { Constants, WebBrowser } from "expo";
+import _Button from "../components/Button";
+import MovieThumbnailContainer from "../components/MovieThumbnailContainer";
+import styles from "../config/styles";
 
-const _Button = props => {
-  return (
-    <TouchableOpacity
-      onPress={props.handleTrailerVideo}
-      style={{ ...styles.themes.default.button }}
-    >
-      <Text style={{ color: "white", ...styles.themes.default.textCenter }}>
-        {props.title}
-      </Text>
-      {props.children}
-    </TouchableOpacity>
-  );
-};
 export default class DetailsScreen extends Component {
   state = {
     movie: {}
@@ -89,22 +78,19 @@ export default class DetailsScreen extends Component {
   };
   render() {
     const { navigation } = this.props;
-    // const itemId = navigation.getParam("movieId", "NO-ID");
     const movie = navigation.getParam("movie", {});
+
     return (
       <View style={{ flex: 1 }}>
         <ScrollView>
-          {movie.fullImage && (
-            <View style={{ display: "flex", flex: 1 }}>
-              <Image
-                source={{
-                  uri: movie.fullImage
-                }}
-                style={{ height: 300, width: null, flex: 1 }}
-              />
-            </View>
-          )}
-          <View style={styles.themes.default.container}>
+          {/* movie-thumbnail-container */}
+          {movie.fullImage && <MovieThumbnailContainer thumbnailSrc={movie.fullImage} />}
+          {/* movie details */}
+
+          <View
+            className="movie-details"
+            style={styles.themes.default.container}
+          >
             <Text style={styles.themes.default.title}>
               {this.state.movie.title}
             </Text>
@@ -116,66 +102,24 @@ export default class DetailsScreen extends Component {
             >
               {this.state.movie.synopsis}
             </Text>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center"
-              }}
-            >
+          </View>
+          {/* movie action */}
+          <View
+            className="movie-actions"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center"
+            }}
+          >
             <_Button title="Watch trailer" {...this.handleTrailerVideo} />
             <_Button title="Watch The Movie" {...this.handleOpenUpMovie} />
-            
-            </View>
           </View>
         </ScrollView>
       </View>
     );
   }
 }
-
-const styles = {
-  themes: {
-    default: {
-      container: {
-        paddingTop: 15,
-        paddingBottom: 15,
-        paddingLeft: 10,
-        paddingRight: 10
-      },
-      bigTitle: {
-        fontSize: 24
-      },
-      title: {
-        fontSize: 20,
-        padding: 5,
-        fontWeight: "bold"
-      },
-      text: {
-        fontSize: 16
-      },
-      textCenter: {
-        textAlign: "center"
-      },
-      padding5: {
-        padding: 5
-      },
-      button: {
-        fontSize: 16,
-        padding: 5,
-        backgroundColor: "#2196f3",
-        color: "white",
-        margin: 10,
-        borderRadius: 5,
-        textAlign: "center",
-        flex: 1
-      }
-    },
-    light: {},
-    green: {},
-    red:{}
-  }
-};
 
 const defaultThemeStyle = StyleSheet.create(styles.themes.default);
 // const lightThemeStyle = StyleSheet.create(styles.themes.default);
