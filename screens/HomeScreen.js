@@ -20,7 +20,7 @@ const queries = gql`
   query($limit: Int!, $skip: Int!) {
     topMovies: allMovies(
       orderBy: { released: -1 }
-      filter: { released: { from: "2017", to: "2020" } }
+      filter: { released: { from: "2017", to: "2019" } }
       limit: $limit
       skip: $skip
     ) {

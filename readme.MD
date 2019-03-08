@@ -31,3 +31,6 @@ db.blog.createIndex(
      name: "IndexName"
    }
  )
+
+example
+db.movies.createIndex({"title":"text", "year":"text", "synopsis":"text", "synopsisEng":"text"}, {"weights":{"title":3, "year":1, "synopsis":1, "synopsisEng":1}, "name":"TextIndex"})

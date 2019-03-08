@@ -14,7 +14,7 @@ import MovieList from "../components/Movie/MovieList";
 
 const SEARCH_QUERY = gql`
   query($search: String, $limit: Int, $skip: Int) {
-    Movies: allMovies(filter: { search: $search }, limit: $limit, skip: $skip) {
+    Movies: allMovies(filter: { search: $search }, limit: $limit, skip: $skip, orderBy:{released:-1}) {
       id
       title
       year
@@ -32,10 +32,10 @@ class SearchScreen extends Component {
   };
   static navigationOptions = ({ navigation }) => {
     return {
-      // headerTransparent: true,
+      headerTransparent: true,
       // headerBackground: "rgba(123, 126, 130, 0.53)",
-      headerTitle: "Discovery"
-      // header: <HeaderComponent {...this.props} />
+      // headerTitle: "Discovery"
+      tabBarOptions: { style: { marginTop: 24 } }
     };
   };
   handleInputChanged = text => {
@@ -76,7 +76,7 @@ class SearchScreen extends Component {
         <Query
           query={SEARCH_QUERY}
           variables={{
-            search: this.state.search || null,
+            search: this.state.search,
             limit: this.state.limit,
             skip: this.state.skip
           }}
@@ -84,7 +84,7 @@ class SearchScreen extends Component {
           {({ loading, error, data, fetchMore, variables }) => {
             return (
               <View>
-                {/* <HeaderComponent {...this.props} {...fetchMore} doSearch={this.searchText} /> */}
+                <View className="emptyUpperSpace"></View>
                 <View style={{ display: "flex", flexDirection: "row" }}>
                   <TabBarIcon
                       name={Platform.OS === "ios" ? "ios-search" : "md-search"}
@@ -94,6 +94,7 @@ class SearchScreen extends Component {
                   <TextInput
                     onChangeText={this.handleInputChanged}
                     value={this.state.search}
+                    placeholder="Search for title, actors or content..."
                     style={{
                       borderWidth: 1,
                       borderTopRightRadius: 10,
@@ -115,7 +116,7 @@ class SearchScreen extends Component {
                         onFetchMore={() => this.reDoSearch(fetchMore)}
                         onReflesh={() => {}}
                         skip={this.state.skip}
-                        limit={this.limit}
+                        limit={this.state.limit}
                         loading={loading || false}
                         {...this.props}
                       />
