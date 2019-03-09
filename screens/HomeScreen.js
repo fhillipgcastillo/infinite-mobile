@@ -104,7 +104,7 @@ class HomeScreen extends React.Component {
                 onReflesh={() => this.onReflesh(fetchMore)}
                 skip={this.state.skip}
                 limit={this.limit}
-                loading={loading || false}
+                loading={loading}
                 {...this.props}
               />
               {error ? <Text>{`Error! ${error.message}`}</Text> : null}
