@@ -5,14 +5,15 @@ import {
   Text,
   StyleSheet,
   RefreshControl,
-  Button
+  Button,
+  FlatList
 } from "react-native";
 import MoviewPreview from "./MoviePreview";
 
 export default class MovieList extends Component {
   state = { movies: [], currentPage: 1, pageSize: 10, isLoading: false };
   componentDidMount() {
-    if(this.props.loading) this.setState({isLoading: this.props.loading});
+    if (this.props.loading) this.setState({ isLoading: this.props.loading });
   }
   onFetchMore = this.props.onFetchMore;
   onRefresh = this.props.onReflesh;
@@ -21,19 +22,19 @@ export default class MovieList extends Component {
       nativeEvent.contentOffset.y >=
         nativeEvent.contentSize.height -
           nativeEvent.layoutMeasurement.height * 2 &&
-      nativeEvent.contentOffset.y <= nativeEvent.contentSize.height && !this.props.loading
+      nativeEvent.contentOffset.y <= nativeEvent.contentSize.height &&
+      !this.props.loading
     ) {
-      this.onFetchMore()
+      this.onFetchMore();
       console.log("do reload");
     }
     // console.log("loading", this.props.loading);
-
   };
-  handleScrollEnd = SyntheticEvent => {
-  };
+  handleScrollEnd = SyntheticEvent => {};
   render() {
+    let props = this.props;
     return (
-      <ScrollView
+      <FlatList
         style={styles.listContainer}
         refreshControl={
           <RefreshControl
@@ -45,19 +46,17 @@ export default class MovieList extends Component {
         onScrollEndDrag={this.handleScrollEnd}
         pagingEnabled={true}
         overScrollMode="always"
-      >
-        {this.props.movies.map((movie, index) => (
+        data={this.props.movies}
+        keyExtractor={(item, index) => item.id}
+        renderItem={({ index, item, separators }) => (
           <MoviewPreview
             key={index}
-            movie={movie}
-            onDetailPress={() => this.props.navigation.navigate("Details")}
-            {...this.props}
+            movie={item}
+            onDetailPress={() => props.navigation.navigate("Details")}
+            navigation={props.navigation}
           />
-        ))}
-        <View className="pagination" style={styles.pagination}>
-          <Button onPress={this.onFetchMore} title="Next" />
-        </View>
-      </ScrollView>
+        )}
+      />
     );
   }
 }

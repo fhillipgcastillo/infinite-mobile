@@ -66,13 +66,10 @@ export default class DetailsScreen extends Component {
     const { navigation } = this.props;
     const movie = navigation.getParam("movie", {});
     this.setState({ movie: movie });
-    // console.log("data", this.props.data);
     if (this.props.data) this.setState({ movie: this.props.data.movie });
   }
   handleTrailerVideo = src => {
-    // console.log(this.state.movie);
     try {
-      console.log("src", src);
       WebBrowser.openBrowserAsync(src);
     } catch {
       Linking.canOpenURL(src).then(supported => {
@@ -88,7 +85,6 @@ export default class DetailsScreen extends Component {
   };
   handleOpenUpMovie = src => {
     try {
-      console.log("src", src);
       WebBrowser.openBrowserAsync(src);
     } catch {
       Linking.canOpenURL(src).then(supported => {
@@ -108,7 +104,6 @@ export default class DetailsScreen extends Component {
     return (
       <Query query={this._getQuery() || "{}"} variables={{ movieId: movie.id }}>
         {({ loading, error, data, fetchMore, variables }) => {
-          // if(data && this.state.movie) console.log('have data', this.state.movie);
           if (data) this.Data = data;
           return (
             <View style={{ flex: 1 }}>

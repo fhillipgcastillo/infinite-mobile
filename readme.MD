@@ -34,3 +34,36 @@ db.blog.createIndex(
 
 example
 db.movies.createIndex({"title":"text", "year":"text", "synopsis":"text", "synopsisEng":"text"}, {"weights":{"title":3, "year":1, "synopsis":1, "synopsisEng":1}, "name":"TextIndex"})
+
+
+ #Final Layout Muck up
+                
+##Home 
+  top => TabBar or Breadcrumb (All) => 
+    TV Shows, MOvies or My List
+  Billboard
+  Differents categories
+    => Populars
+      Trendings
+        Movie List/Grop of movie or tv shows
+          => Type => Tv Show or Movie
+            Data
+  Add/Secundary Billboard
+  Big Group => Big Images (opcional)
+  Continue Watching
+  My List (opcional)
+
+##Home => TV Shows Section
+  Top => Breacrumb 
+    => Current Type/Category (TV SHows) 
+      its a dropdown of categories wit current sellected
+      TV Shows Categories or Genres
+  Same Structure of Normal Home
+
+##Home => Movies
+  Same as TV Shows
+
+##Header => transparent with Logo, and the breadcrumb
+the bigboard of the Section  go under the header
+
+###Each Group of movies has Lazy loading, auto loading after sertain section
