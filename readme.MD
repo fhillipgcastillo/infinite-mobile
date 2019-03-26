@@ -39,7 +39,7 @@ db.movies.createIndex({"title":"text", "year":"text", "synopsis":"text", "synops
  #Final Layout Muck up
                 
 ##Home 
-  top => TabBar or Breadcrumb (All) => 
+  top => TabBar, header or Breadcrumb (All) => 
     TV Shows, MOvies or My List
   Billboard
   Differents categories

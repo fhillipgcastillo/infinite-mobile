@@ -33,7 +33,8 @@ HomeStack.navigationOptions = {
 
 const SearchStack = createStackNavigator(
   {
-    Search: SearchScreen
+    Search: SearchScreen,
+    Details: DetailsScreen
   },
   {
     cardStyle: {

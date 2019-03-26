@@ -18,11 +18,44 @@ const apiPath = "http://varnatrd.tech/api";
 
 const queries = gql`
   query($limit: Int!, $skip: Int!) {
-    topMovies: allMovies(
-      orderBy: { released: -1 }
-      filter: { released: { from: "2017", to: "2019" } }
+    Billboard: getMovie(_id: "5c71c941d88ff368ee766dfd") {
+      id
+      title
+      year
+      covertImage
+    }
+    lastUpdated: allMovies(
+      orderBy: { dateUpdated: -1 }
       limit: $limit
       skip: $skip
+    ) {
+      id
+      title
+      year
+      covertImage
+    }
+    mostRecent: allMovies(orderBy: { released: -1 }, limit: 12, skip: 0) {
+      id
+      title
+      year
+      covertImage
+    }
+    mostView: allMovies(
+      orderBy: { rating: -1 }
+      filter: { released: { from: "2018" } }
+      limit: 12
+      skip: 0
+    ) {
+      id
+      title
+      year
+      covertImage
+    }
+    bestRatings: allMovies(
+      orderBy: { view: -1 }
+      filter: { released: { from: "2018" } }
+      limit: 12
+      skip: 0
     ) {
       id
       title
@@ -41,13 +74,13 @@ class HomeScreen extends React.Component {
   state = {
     movies: [],
     skip: 0,
-    limit: 10,
+    limit: 12,
     data: []
   };
   onFetchMore = fetchMore => {
     var self = this;
-    var skip = this.state.skip+this.state.limit;
-    self.setState({skip: skip});
+    var skip = this.state.skip + this.state.limit;
+    self.setState({ skip: skip });
 
     fetchMore({
       variables: {
@@ -57,14 +90,14 @@ class HomeScreen extends React.Component {
       updateQuery: (prev, { fetchMoreResult, ...rest }) => {
         if (!fetchMoreResult) return prev;
         var newValue = Object.assign({}, prev, {
-          topMovies: [...prev.topMovies, ...fetchMoreResult.topMovies]
+          mostRecent: [...prev.mostRecent, ...fetchMoreResult.mostRecent]
         });
         return newValue;
       }
     });
   };
-  onSearch = ()=>{
-    if(this.props.fetchMore){
+  onSearch = () => {
+    if (this.props.fetchMore) {
       this.props.fetchMore({
         variables: {
           skip: 0,
@@ -74,19 +107,20 @@ class HomeScreen extends React.Component {
           if (!fetchMoreResult) return prev;
           return fetchMoreResult;
         }
-      })
+      });
     }
   };
-  onReflesh = fetchMore => fetchMore({
-    variables: {
-      skip: this.state.skip+this.state.limit,
-      limit: this.state.limit
-    },
-    updateQuery: (prev, { fetchMoreResult, ...rest }) => {
-      if (!fetchMoreResult) return prev;
-      return fetchMoreResult;
-    }
-  });
+  onReflesh = fetchMore =>
+    fetchMore({
+      variables: {
+        skip: this.state.skip + this.state.limit,
+        limit: this.state.limit
+      },
+      updateQuery: (prev, { fetchMoreResult, ...rest }) => {
+        if (!fetchMoreResult) return prev;
+        return fetchMoreResult;
+      }
+    });
   render() {
     let variables = {
       skip: this.state.skip,
@@ -97,25 +131,82 @@ class HomeScreen extends React.Component {
       <Query query={queries} variables={variables}>
         {({ loading, error, data, fetchMore, variables }) => {
           return (
-            <View>
+            <ScrollView
+              style={{
+                display: "flex",
+                flexDirrection: "column",
+                flexWrap: "nowrap",
+                backgroundColor: "rgba(255,255,255,0.8)"
+              }}
+            >
+              <View
+                className="BillBoard"
+                style={{ alignAlight: "strech", display: "none" }}
+              >
+                <TouchableOpacity>
+                  <Image
+                    source={{
+                      uri: data.Billboard ? data.Billboard.covertImage : null
+                    }}
+                    resizeMode={"cover"}
+                    resizeMethod={"scale"}
+                    style={{ height: 200, width: 150 }}
+                  />
+                </TouchableOpacity>
+              </View>
               <MovieList
-                movies={data.topMovies || []}
+                movies={data.lastUpdated || []}
                 onFetchMore={() => this.onFetchMore(fetchMore)}
                 onReflesh={() => this.onReflesh(fetchMore)}
                 skip={this.state.skip}
                 limit={this.limit}
                 loading={loading}
+                title={"Last Updated"}
                 {...this.props}
+                style={{ height: 200 }}
+              />
+              <MovieList
+                movies={data.mostRecent || []}
+                onFetchMore={() => this.onFetchMore(fetchMore)}
+                onReflesh={() => this.onReflesh(fetchMore)}
+                skip={this.state.skip}
+                limit={this.limit}
+                loading={loading}
+                title={"Most Recent"}
+                {...this.props}
+                style={{ height: 200 }}
+              />
+              <MovieList
+                movies={data.mostView || []}
+                onFetchMore={() => this.onFetchMore(fetchMore)}
+                onReflesh={() => this.onReflesh(fetchMore)}
+                skip={this.state.skip}
+                limit={this.limit}
+                title={"Most View"}
+                loading={loading}
+                {...this.props}
+                style={{ height: 200 }}
+              />
+              <MovieList
+                movies={data.bestRatings || []}
+                onFetchMore={() => this.onFetchMore(fetchMore)}
+                onReflesh={() => this.onReflesh(fetchMore)}
+                skip={this.state.skip}
+                limit={this.limit}
+                title={"Best Ratings"}
+                loading={loading}
+                {...this.props}
+                style={{ height: 200 }}
               />
               {error ? <Text>{`Error! ${error.message}`}</Text> : null}
-              {loading 
-              ? <ActivityIndicator
+              {loading ? (
+                <ActivityIndicator
                   animating={loading}
                   style={[styles.centering, { height: 80 }]}
                   size="large"
                 />
-               : null}
-            </View>
+              ) : null}
+            </ScrollView>
           );
         }}
       </Query>

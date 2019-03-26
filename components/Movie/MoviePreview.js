@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 
-class MoviewPreview extends Component {
+class MoviewPreview extends PureComponent {
   state = {
     movie: {}
   };
@@ -18,12 +18,13 @@ class MoviewPreview extends Component {
     return (
       <View style={styles.container}>
         <TouchableOpacity onPress={this.handleOnPress}>
-            <View >
+            <View>
               <Image
                 source={{ uri: this.state.movie.covertImage }}
-                style={{ height: 200, width: null, flex: 1 }}
+                style={{ height: 200, width: 150}}
               />
-              <View>
+              
+              <View style={{display: "none" }} >
                 <View>
                   <Text>{this.state.movie.title}</Text>
                 </View>
@@ -40,9 +41,13 @@ class MoviewPreview extends Component {
 
 let styles = StyleSheet.create({
   container: {
-    margin: 10,
-    padding: 5,
-    backgroundColor:"white"
+    margin: 5,
+    backgroundColor:"white",
+    flex: 1,
+    width: 150
+  },
+  padding_5: {
+    padding: 5
   }
 });
 
