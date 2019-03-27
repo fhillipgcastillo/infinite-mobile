@@ -68,9 +68,9 @@ class SearchScreen extends Component {
   };
   reDoSearch = fetchMore => {
     let self = this;
-    
+
     let variables = {
-      filter:{...self.state.filter, search: this.state.search.trim()},
+      filter: { ...self.state.filter, search: this.state.search.trim() },
       limit: this.state.limit,
       skip: this.state.skip
     };
@@ -85,18 +85,20 @@ class SearchScreen extends Component {
       }
     });
   };
-
+  getQueyVariable = ()=>{
+    return {
+      filter:
+        Object.keys(this.state.filter).length > 0
+          ? this.state.filter
+          : undefined,
+      limit: this.state.limit,
+      skip: this.state.skip
+    };
+  }
   render() {
     return (
       <View>
-        <Query
-          query={SEARCH_QUERY}
-          variables={{
-            filter: this.state.filter,
-            limit: this.state.limit,
-            skip: this.state.skip
-          }}
-        >
+        <Query query={SEARCH_QUERY} variables={this.getQueyVariable()}>
           {({ loading, error, data, fetchMore, variables }) => {
             return (
               <View>
@@ -126,7 +128,7 @@ class SearchScreen extends Component {
                 </View>
                 <View className="filters">
                   <View>
-                    {data && data.Genres  && data.Genres.length ? (
+                    {data && data.Genres && data.Genres.length ? (
                       <Picker
                         selectedValue={this.state.selectedGenre}
                         style={{ height: 50, width: 200 }}
@@ -135,13 +137,17 @@ class SearchScreen extends Component {
                             selectedGenre: itemValue,
                             filter: {
                               ...this.state.filter,
-                              genres:  [itemValue]
+                              genres: [itemValue]
                             }
                           });
                         }}
                       >
                         {data.Genres.map((g, index) => (
-                          <Picker.Item key={index} label={g.name} value={g.name} />
+                          <Picker.Item
+                            key={index}
+                            label={g.name}
+                            value={g.name}
+                          />
                         ))}
                       </Picker>
                     ) : null}
