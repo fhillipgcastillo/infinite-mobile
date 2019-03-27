@@ -5,6 +5,7 @@ import {
   TextInput,
   Text,
   ScrollView,
+  Picker,
   TouchableHighlight
 } from "react-native";
 import TabBarIcon from "../components/TabBarIcon";
@@ -13,8 +14,16 @@ import { Query } from "react-apollo";
 import MovieList from "../components/Movie/MovieList";
 
 const SEARCH_QUERY = gql`
-  query($search: String, $limit: Int, $skip: Int) {
-    Movies: allMovies(filter: { search: $search }, limit: $limit, skip: $skip, orderBy:{released:-1}) {
+  query($filter: MovieFilterInput, $limit: Int, $skip: Int) {
+    Genres: getAllGenres {
+      name
+    }
+    Movies: allMovies(
+      filter: $filter
+      limit: $limit
+      skip: $skip
+      orderBy: { released: -1 }
+    ) {
       id
       title
       year
@@ -28,7 +37,9 @@ class SearchScreen extends Component {
     search: "",
     skip: 0,
     limit: 10,
-    searching: false
+    searching: false,
+    filter: {},
+    selectedGenre: null
   };
   static navigationOptions = ({ navigation }) => {
     return {
@@ -39,7 +50,11 @@ class SearchScreen extends Component {
     };
   };
   handleInputChanged = text => {
-    this.setState({ search: text, skip: 0, limit: 10 });
+    this.setState({
+      filter: { ...this.state.filter, search: text },
+      skip: 0,
+      limit: 10
+    });
   };
   searchText = fetchMore => {
     // this.setState({ search: text });
@@ -52,12 +67,13 @@ class SearchScreen extends Component {
     // }
   };
   reDoSearch = fetchMore => {
+    let self = this;
+    
     let variables = {
-      search: this.state.search.trim(),
+      filter:{...self.state.filter, search: this.state.search.trim()},
       limit: this.state.limit,
       skip: this.state.skip
     };
-    let self = this;
     console.log("variables", variables);
     fetchMore({
       variables: variables,
@@ -76,7 +92,7 @@ class SearchScreen extends Component {
         <Query
           query={SEARCH_QUERY}
           variables={{
-            search: this.state.search,
+            filter: this.state.filter,
             limit: this.state.limit,
             skip: this.state.skip
           }}
@@ -84,13 +100,13 @@ class SearchScreen extends Component {
           {({ loading, error, data, fetchMore, variables }) => {
             return (
               <View>
-                <View className="emptyUpperSpace"></View>
+                <View className="emptyUpperSpace" />
                 <View style={{ display: "flex", flexDirection: "row" }}>
                   <TabBarIcon
-                      name={Platform.OS === "ios" ? "ios-search" : "md-search"}
-                      style={{ padding: 10 }}
-                    />
-                  
+                    name={Platform.OS === "ios" ? "ios-search" : "md-search"}
+                    style={{ padding: 10 }}
+                  />
+
                   <TextInput
                     onChangeText={this.handleInputChanged}
                     value={this.state.search}
@@ -108,6 +124,29 @@ class SearchScreen extends Component {
                     }}
                   />
                 </View>
+                <View className="filters">
+                  <View>
+                    {data && data.Genres  && data.Genres.length ? (
+                      <Picker
+                        selectedValue={this.state.selectedGenre}
+                        style={{ height: 50, width: 200 }}
+                        onValueChange={(itemValue, itemIndex) => {
+                          this.setState({
+                            selectedGenre: itemValue,
+                            filter: {
+                              ...this.state.filter,
+                              genres:  [itemValue]
+                            }
+                          });
+                        }}
+                      >
+                        {data.Genres.map((g, index) => (
+                          <Picker.Item key={index} label={g.name} value={g.name} />
+                        ))}
+                      </Picker>
+                    ) : null}
+                  </View>
+                </View>
                 <View>
                   <ScrollView>
                     {data && data.Movies && (
@@ -118,6 +157,7 @@ class SearchScreen extends Component {
                         skip={this.state.skip}
                         limit={this.state.limit}
                         loading={loading || false}
+                        horizontal={false}
                         {...this.props}
                       />
                     )

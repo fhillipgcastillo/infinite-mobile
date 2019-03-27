@@ -47,7 +47,7 @@ export default class MovieList extends Component {
               onRefresh={this.onRefresh}
             />
           }
-          horizontal={true}
+          horizontal={this.props.horizontal || true}
           // onScroll={this.handleScroll}
           // onScrollEndDrag={this.handleScrollEnd}
           // scrollEventThrottle={16}
