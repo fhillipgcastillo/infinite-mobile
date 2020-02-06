@@ -1,23 +1,23 @@
-##Requeriments##
+## Requeriments ##
 npm install apollo-boost react-apollo graphql-tag graphql apollo-client-preset
 
-##Deploying  exampl##
+## Deploying  exampl ##
 expo build:<android/ios> --release-channel <Channel ex:prod-v1>
 Example
 expo build:android --release-channel stage-v1
 
-##publishing a release channel##
+## publishing a release channel##
 expo publish --release-channel staging
 
-##create mongo index##
+## create mongo index##
 
-###create index for specific values/columns###
+### create index for specific values/columns###
 * db.collection.createIndex( { "columnName": "columnType" } )
 
-###create index for all text values###
+### create index for all text values###
 * db.collection.createIndex( { "$**": "text" } )
 
-###Create Index with Weight
+### Create Index with Weight
 db.blog.createIndex(
    {
      columnName: "type",
@@ -38,7 +38,7 @@ db.movies.createIndex({"title":"text", "year":"text", "synopsis":"text", "synops
 
  #Final Layout Muck up
                 
-##Home 
+## Home 
   top => TabBar, header or Breadcrumb (All) => 
     TV Shows, MOvies or My List
   Billboard
@@ -53,17 +53,17 @@ db.movies.createIndex({"title":"text", "year":"text", "synopsis":"text", "synops
   Continue Watching
   My List (opcional)
 
-##Home => TV Shows Section
+## Home => TV Shows Section
   Top => Breacrumb 
     => Current Type/Category (TV SHows) 
       its a dropdown of categories wit current sellected
       TV Shows Categories or Genres
   Same Structure of Normal Home
 
-##Home => Movies
+## Home => Movies
   Same as TV Shows
 
-##Header => transparent with Logo, and the breadcrumb
+## Header => transparent with Logo, and the breadcrumb
 the bigboard of the Section  go under the header
 
-###Each Group of movies has Lazy loading, auto loading after sertain section
+### Each Group of movies has Lazy loading, auto loading after sertain section
