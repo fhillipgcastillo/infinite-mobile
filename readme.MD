@@ -9,34 +9,7 @@ expo build:android --release-channel stage-v1
 ## publishing a release channel##
 expo publish --release-channel staging
 
-## create mongo index##
-
-### create index for specific values/columns###
-* db.collection.createIndex( { "columnName": "columnType" } )
-
-### create index for all text values###
-* db.collection.createIndex( { "$**": "text" } )
-
-### Create Index with Weight
-db.blog.createIndex(
-   {
-     columnName: "type",
-     ...
-   },
-   {
-     weights: {
-       columnName: (Weight)10,
-       ...
-     },
-     name: "IndexName"
-   }
- )
-
-example
-db.movies.createIndex({"title":"text", "year":"text", "synopsis":"text", "synopsisEng":"text"}, {"weights":{"title":3, "year":1, "synopsis":1, "synopsisEng":1}, "name":"TextIndex"})
-
-
- #Final Layout Muck up
+ # Final Layout Muck up structure
                 
 ## Home 
   top => TabBar, header or Breadcrumb (All) => 
@@ -67,3 +40,32 @@ db.movies.createIndex({"title":"text", "year":"text", "synopsis":"text", "synops
 the bigboard of the Section  go under the header
 
 ### Each Group of movies has Lazy loading, auto loading after sertain section
+
+# Just for Reference
+
+## create mongo index##
+
+### create index for specific values/columns###
+* db.collection.createIndex( { "columnName": "columnType" } )
+
+### create index for all text values###
+* db.collection.createIndex( { "$**": "text" } )
+
+### Create Index with Weight
+db.blog.createIndex(
+   {
+     columnName: "type",
+     ...
+   },
+   {
+     weights: {
+       columnName: (Weight)10,
+       ...
+     },
+     name: "IndexName"
+   }
+ )
+
+example
+db.movies.createIndex({"title":"text", "year":"text", "synopsis":"text", "synopsisEng":"text"}, {"weights":{"title":3, "year":1, "synopsis":1, "synopsisEng":1}, "name":"TextIndex"})
+
