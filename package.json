@@ -15,7 +15,7 @@
     "@expo/samples": "2.1.1",
     "apollo-boost": "^0.1.28",
     "apollo-client-preset": "^1.0.8",
-    "expo": "^32.0.0",
+    "expo": "^46.0.14",
     "graphql": "^14.1.1",
     "graphql-tag": "^2.10.1",
     "react": "16.5.0",
